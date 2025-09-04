@@ -243,11 +243,10 @@ on:
       builder_name:
         description: "Set Armbian builder signature."
         required: false
-        default: "ophub"
+        default: "lee"
         type: choice
         options:
-          - ophub
-          - angel
+          - lee
 
 env:
   TZ: Etc/UTC
