@@ -174,8 +174,8 @@ runs:
             # Compress Armbian image file
             pigz -qf *.img || gzip -qf *.img
             # Generate a sha256sum verification file for each Armbian image file
-            for file in *; do [[ -f "${file}" ]] && sha256sum "${file}" >"${file}.sha" 2>/dev/null; done
-            rm -f *.sha.sha 2>/dev/null
+            #for file in *; do [[ -f "${file}" ]] && sha256sum "${file}" >"${file}.sha" 2>/dev/null; done
+            #rm -f *.sha.sha 2>/dev/null
             sync && sleep 3
 
             cd ${{ github.action_path }}
@@ -255,7 +255,10 @@ runs:
 
             # Choose Ubuntu or a Docker container to compile the kernel.
             if [[ "$(uname -m)" == "aarch64" && -n "${docker_compile}" ]]; then
+                echo -e "Synchronize server time."
+                sudo ntpdate ntp.ubuntu.com 0.pool.ntp.org || true
                 echo -e "Using the Armbian Docker image to compile the kernel."
+                sudo docker restart ${docker_container} >/dev/null && sleep 3
                 docker exec -i "${docker_container}" bash -c 'bash "$0" -u && bash "$0" "$@"' "${docker_script}" "${make_args[@]}"
             else
                 echo -e "Using the original system to compile the kernel."
